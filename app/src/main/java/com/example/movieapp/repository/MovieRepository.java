@@ -27,6 +27,7 @@ public class MovieRepository {
     public static MovieRepository getInstance() {
         if (sMovieRepository == null)
             sMovieRepository = new MovieRepository();
+        Log.d(TAG, "getInstance called():  -> " + sMovieRepository.toString());
         return sMovieRepository;
     }
     
@@ -40,7 +41,7 @@ public class MovieRepository {
                     movieMutableLiveData.setValue(response.body());
                 }
             }
-            
+    
             @Override
             public void onFailure(Call<MovieResult> call, Throwable t) {
                 Log.d(TAG, "onFailure called():  ->" + t.getMessage());
@@ -49,4 +50,24 @@ public class MovieRepository {
         });
         return movieMutableLiveData;
     }
+    
+    public MutableLiveData<MovieResult> getTopRatedMovie(String api) {
+        MutableLiveData<MovieResult> movieResultMutableLiveData = new MutableLiveData<>();
+        mIMoviesCallListener.getTopRatedMovie(api).enqueue(new Callback<MovieResult>() {
+            @Override
+            public void onResponse(Call<MovieResult> call, Response<MovieResult> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse called():  -> " + response.raw());
+                    movieResultMutableLiveData.setValue(response.body());
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<MovieResult> call, Throwable t) {
+                movieResultMutableLiveData.setValue(null);
+            }
+        });
+        return movieResultMutableLiveData;
+    }
+    
 }
