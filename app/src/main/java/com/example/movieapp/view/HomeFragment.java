@@ -1,20 +1,28 @@
-package com.example.movieapp;
+package com.example.movieapp.view;
 
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.widget.TextView;
-
+import com.example.movieapp.MovieDetailActivity;
+import com.example.movieapp.R;
 import com.example.movieapp.adapter.SlideAdapter;
 import com.example.movieapp.adapter.movieadapter.MoviesAdapter;
 import com.example.movieapp.adapter.peopleadapter.PeopleAdapter;
@@ -31,8 +39,7 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = ":: MainActivity :";
+public class HomeFragment extends Fragment {
     private static final int SPEED_SCROOL = 2000;
     private RecyclerView mPopularRecycler, mTopRecycler, mCastingRecycler;
     private ViewPager2 mViewPager2;
@@ -46,21 +53,47 @@ public class MainActivity extends AppCompatActivity {
     private PeopleAdapter mPeopleAdapter;
     private Handler mHandler;
     private Runnable mRunnable;
+    private static final String TAG = ":: HomeFragment :";
+    
+    public static HomeFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        HomeFragment fragment = new HomeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
     
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        initView();
-        setSupportActionBar(mToolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
+    }
+    
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.home_activity, container, false);
+    }
+    
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initView(view);
+        // link @{ https://stackoverflow.com/questions/38189198/how-to-use-setsupportactionbar-in-fragment}
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        
+        
+        // setSupportActionBar(mToolbar);
+        
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         //movie
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         mMovieViewModel.initPopular();
         mMovieViewModel.getMoviePopular().observe(this, this::getMoviePopular);
         //list top movie
         mMovieViewModel.initTopRated();
-        ;
         mMovieViewModel.getListTop().observe(this, this::getTopRated);
         
         //person
@@ -74,9 +107,9 @@ public class MainActivity extends AppCompatActivity {
     
     private void getTopRated(MovieResult movieResult) {
         List<Movie> movieList = movieResult.getResultsMovies();
-        mMoviesAdapter = new MoviesAdapter(this, movieList);
+        mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
         mTopRecycler.setHasFixedSize(true);
-        mTopRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        mTopRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         
         mTopRecycler.setAdapter(mMoviesAdapter);
         automaticMove(movieList, mTopRecycler);
@@ -102,24 +135,24 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void getPeople(People people) {
-        
+    
         mCastingRecycler.setHasFixedSize(true);
-        mCastingRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-        
+        mCastingRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+    
         List<Persons> mPersonsList = new ArrayList<>(people.getPersonsList());
-        
-        mPeopleAdapter = new PeopleAdapter(this, mPersonsList);
-        
+    
+        mPeopleAdapter = new PeopleAdapter(getActivity(), mPersonsList);
+    
         mCastingRecycler.setAdapter(mPeopleAdapter);
         automaticMove(mPersonsList, mCastingRecycler);
     }
     
-    private void initView() {
-        mPopularRecycler = findViewById(R.id.recyclerView_popular);
-        mTopRecycler = findViewById(R.id.recyclerView_topRated);
-        mCastingRecycler = findViewById(R.id.recyclerView_caster);
-        mViewPager2 = findViewById(R.id.viewpager2_container);
-        mToolbar = findViewById(R.id.toolBar);
+    private void initView(View view) {
+        mPopularRecycler = view.findViewById(R.id.recyclerView_popular);
+        mTopRecycler = view.findViewById(R.id.recyclerView_topRated);
+        mCastingRecycler = view.findViewById(R.id.recyclerView_caster);
+        mViewPager2 = view.findViewById(R.id.viewpager2_container);
+        mToolbar = view.findViewById(R.id.toolBar);
     }
     
     private void getMoviePopular(MovieResult movieResult) {
@@ -128,10 +161,15 @@ public class MainActivity extends AppCompatActivity {
         for (Movie movie : movieList) {
             Log.d(TAG, "getMoviePopular called():  ->" + movie.getTitle() + "\n");
         }
-        mMoviesAdapter = new MoviesAdapter(this, movieList);
-        mPopularRecycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
+        mPopularRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
         mPopularRecycler.setHasFixedSize(true);
         mPopularRecycler.setAdapter(mMoviesAdapter);
+        
+        mMoviesAdapter.setIClickListener((view, position) -> {
+            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(), movieList.get(position).getId());
+            Objects.requireNonNull(getActivity()).startActivity(intent);
+        });
         automaticMove(movieList, mPopularRecycler);
         slideView(movieList);
     }
@@ -144,19 +182,14 @@ public class MainActivity extends AppCompatActivity {
             i++;
         }
         Log.d(TAG, "slideView called():  ->" + mSlideMovie.size());
-        
-        mSlideAdapter = new SlideAdapter(mSlideMovie, this);
+    
+        mSlideAdapter = new SlideAdapter(mSlideMovie, getActivity());
         mViewPager2.setAdapter(mSlideAdapter);
         
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                mViewPager2.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mViewPager2.setCurrentItem((mViewPager2.getCurrentItem() + 1) % mSlideMovie.size());
-                    }
-                });
+                mViewPager2.post(() -> mViewPager2.setCurrentItem((mViewPager2.getCurrentItem() + 1) % mSlideMovie.size()));
             }
         };
         mTimer = new Timer();
@@ -165,3 +198,4 @@ public class MainActivity extends AppCompatActivity {
     //make a bullet
     
 }
+

@@ -7,17 +7,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Movie implements Parcelable {
-    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
-        @Override
-        public Movie createFromParcel(Parcel in) {
-            return new Movie(in);
-        }
-        
-        @Override
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
     @SerializedName("id")
     @Expose
     private String mId;
@@ -42,11 +31,29 @@ public class Movie implements Parcelable {
     @SerializedName("original_title")
     @Expose
     private String mOriginal_title;
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+        
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+    @SerializedName("popularity")
+    @Expose
+    private String mPopularity;
     
     public Movie() {
     }
     
-    public Movie(String id, String poster_path, String backgroud_path, String title, float vote_average, String overview, String release_date, String original_title) {
+    @SerializedName("runtime")
+    @Expose
+    private int mRuntime;
+    
+    public Movie(String id, String poster_path, String backgroud_path, String title, float vote_average, String overview, String release_date, String original_title, String popularity, int runtime) {
         mId = id;
         mPoster_path = poster_path;
         mBackgroud_path = backgroud_path;
@@ -55,6 +62,9 @@ public class Movie implements Parcelable {
         mOverview = overview;
         mRelease_date = release_date;
         mOriginal_title = original_title;
+        mPopularity = popularity;
+        mRuntime = runtime;
+        
     }
     
     protected Movie(Parcel in) {
@@ -66,6 +76,17 @@ public class Movie implements Parcelable {
         mOverview = in.readString();
         mRelease_date = in.readString();
         mOriginal_title = in.readString();
+        mPopularity = in.readString();
+        mRuntime = in.readInt();
+    }
+    
+    public static Creator<Movie> getCREATOR() {
+        return CREATOR;
+    }
+    
+    @Override
+    public int describeContents() {
+        return 0;
     }
     
     public String getId() {
@@ -133,11 +154,6 @@ public class Movie implements Parcelable {
     }
     
     @Override
-    public int describeContents() {
-        return 0;
-    }
-    
-    @Override
     public void writeToParcel(Parcel parcel, int i) {
         
         parcel.writeString(mId);
@@ -148,5 +164,23 @@ public class Movie implements Parcelable {
         parcel.writeString(mOverview);
         parcel.writeString(mRelease_date);
         parcel.writeString(mOriginal_title);
+        parcel.writeString(mPopularity);
+        parcel.writeInt(mRuntime);
+    }
+    
+    public String getPopularity() {
+        return mPopularity;
+    }
+    
+    public void setPopularity(String popularity) {
+        mPopularity = popularity;
+    }
+    
+    public int getRuntime() {
+        return mRuntime;
+    }
+    
+    public void setRuntime(int runtime) {
+        mRuntime = runtime;
     }
 }

@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.movieapp.BuildConfig;
-import com.example.movieapp.model.moviemodel.Movie;
 import com.example.movieapp.model.moviemodel.MovieResult;
 import com.example.movieapp.repository.MovieRepository;
 
@@ -18,6 +17,7 @@ public class MovieViewModel extends ViewModel {
     private MutableLiveData<MovieResult> mLiveMoviePopular;
     private MutableLiveData<MovieResult> mListTop;
     
+    private MutableLiveData<MovieResult> mMovie;
     
     public void initPopular() {
         if (mLiveMoviePopular != null) return;
@@ -39,5 +39,16 @@ public class MovieViewModel extends ViewModel {
     
     public MutableLiveData<MovieResult> getListTop() {
         return mListTop;
+    }
+    
+    public void initSimilarMovie(String movieId, String api) {
+        if (mMovie != null)
+            return;
+        mMovieRepository = MovieRepository.getInstance();
+        mMovie = mMovieRepository.getSimilarMovie(movieId, api);
+    }
+    
+    public MutableLiveData<MovieResult> getSimilarMovie() {
+        return mMovie;
     }
 }

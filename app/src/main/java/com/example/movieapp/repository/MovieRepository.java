@@ -4,12 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.movieapp.model.moviemodel.Movie;
 import com.example.movieapp.model.moviemodel.MovieResult;
-import com.example.movieapp.network.IMoviesCallListener;
 import com.example.movieapp.network.MovieRetrofit;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,7 +57,7 @@ public class MovieRepository {
                     movieResultMutableLiveData.setValue(response.body());
                 }
             }
-            
+    
             @Override
             public void onFailure(Call<MovieResult> call, Throwable t) {
                 movieResultMutableLiveData.setValue(null);
@@ -70,4 +66,26 @@ public class MovieRepository {
         return movieResultMutableLiveData;
     }
     
+    public MutableLiveData<MovieResult> getSimilarMovie(String movieId, String api) {
+        MutableLiveData<MovieResult> movieResultMutableLiveData = new MutableLiveData<>();
+        
+        mIMoviesCallListener.getSimilarMovie(movieId, api).enqueue(new Callback<MovieResult>() {
+            @Override
+            public void onResponse(Call<MovieResult> call, Response<MovieResult> response) {
+                if (response.isSuccessful()) {
+                    movieResultMutableLiveData.setValue(response.body());
+                    Log.d(TAG, "onResponse called():  ->URL " + response.raw());
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<MovieResult> call, Throwable t) {
+                movieResultMutableLiveData.setValue(null);
+            }
+        });
+        return movieResultMutableLiveData;
+        
+    }
+    
 }
+
