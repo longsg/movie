@@ -14,16 +14,19 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.movieapp.R;
 import com.example.movieapp.model.personmodel.Persons;
+import com.example.movieapp.network.IClickListener;
 import com.example.movieapp.network.UrlManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.http.Url;
-
 public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleViewHolder> {
-    private Context mContext;
-    private List<Persons> mPersons;
+    private Context        mContext;
+    private List<Persons>  mPersons;
+    private IClickListener mIClickListener;
+    
+    public void setIClickListener(IClickListener IClickListener) {
+        mIClickListener = IClickListener;
+    }
     
     public PeopleAdapter(Context context, List<Persons> persons) {
         mContext = context;
@@ -75,7 +78,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.PeopleView
         
         @Override
         public void onClick(View view) {
-        
+            mIClickListener.onClick(view, getAdapterPosition());
         }
     }
     

@@ -12,9 +12,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MovieRepository {
-    private static final String TAG = ":: MovieRepository :";
-    private static MovieRepository sMovieRepository;
-    private IMoviesCallListener mIMoviesCallListener;
+    private static final String              TAG = ":: MovieRepository :";
+    private static       MovieRepository     sMovieRepository;
+    private              IMoviesCallListener mIMoviesCallListener;
     
     public MovieRepository() {
         mIMoviesCallListener = MovieRetrofit.createRetrofit(IMoviesCallListener.class);
@@ -74,7 +74,7 @@ public class MovieRepository {
             public void onResponse(Call<MovieResult> call, Response<MovieResult> response) {
                 if (response.isSuccessful()) {
                     movieResultMutableLiveData.setValue(response.body());
-                    Log.d(TAG, "onResponse called():  ->URL " + response.raw());
+                    Log.d(TAG, "onResponse called():  ->URL " + response.body());
                 }
             }
             

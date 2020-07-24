@@ -20,33 +20,89 @@ public class Persons implements Parcelable {
             return new Persons[size];
         }
     };
+    @SerializedName("overview")
+    @Expose
+    private             String           mOverView;
     @SerializedName("name")
     @Expose
-    private String mName;
+    private             String           mName;
     @SerializedName("id")
     @Expose
-    private String mId;
+    private             String           mId;
     @SerializedName("profile_path")
     @Expose
-    private String mProfile_path;
+    private             String           mProfile_path;
     @SerializedName("known_for")
     @Expose
-    private List<CastFilm> mCastFilmList;
+    private             List<CastFilm>   mCastFilms;
+    @SerializedName("gender")
+    @Expose
+    private             String           mGender;
+    @SerializedName("biography")
+    @Expose
+    private             String           mBiography;
+    @SerializedName("place_of_birth")
+    @Expose
+    private             String           mPlace_of_birth;
     
     public Persons() {
     }
     
-    public Persons(String name, String id, String profile_path, List<CastFilm> castFilmList) {
+    @SerializedName("birthday")
+    @Expose
+    private String mBirthday;
+    
+    public Persons(String overView, String name, String id, String profile_path,
+                   List<CastFilm> castFilms, String gender, String biography,
+                   String place_of_birth, String birthday) {
+        mOverView = overView;
         mName = name;
         mId = id;
         mProfile_path = profile_path;
-        mCastFilmList = castFilmList;
+        mCastFilms = castFilms;
+        mGender = gender;
+        mBiography = biography;
+        mPlace_of_birth = place_of_birth;
+        mBirthday = birthday;
     }
     
     protected Persons(Parcel in) {
+        mOverView = in.readString();
         mName = in.readString();
         mId = in.readString();
         mProfile_path = in.readString();
+        mCastFilms = in.createTypedArrayList(CastFilm.CREATOR);
+        mGender = in.readString();
+        mBiography = in.readString();
+        mPlace_of_birth = in.readString();
+        mBirthday = in.readString();
+    }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        
+        parcel.writeString(mOverView);
+        parcel.writeString(mName);
+        parcel.writeString(mId);
+        parcel.writeString(mProfile_path);
+        parcel.writeTypedList(mCastFilms);
+        parcel.writeString(mGender);
+        parcel.writeString(mBiography);
+        parcel.writeString(mPlace_of_birth);
+        parcel.writeString(mBirthday);
+    }
+    
+    public String getOverView() {
+        return mOverView;
+    }
+    
+    public void setOverView(String overView) {
+        mOverView = overView;
     }
     
     public String getName() {
@@ -73,24 +129,43 @@ public class Persons implements Parcelable {
         mProfile_path = profile_path;
     }
     
-    public List<CastFilm> getCastFilmList() {
-        return mCastFilmList;
+    public List<CastFilm> getCastFilms() {
+        return mCastFilms;
     }
     
-    public void setCastFilmList(List<CastFilm> castFilmList) {
-        mCastFilmList = castFilmList;
+    public void setCastFilms(List<CastFilm> castFilms) {
+        mCastFilms = castFilms;
     }
     
-    @Override
-    public int describeContents() {
-        return 0;
+    public String getGender() {
+        return mGender;
     }
     
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        
-        parcel.writeString(mName);
-        parcel.writeString(mId);
-        parcel.writeString(mProfile_path);
+    public void setGender(String gender) {
+        mGender = gender;
+    }
+    
+    public String getBiography() {
+        return mBiography;
+    }
+    
+    public void setBiography(String biography) {
+        mBiography = biography;
+    }
+    
+    public String getPlace_of_birth() {
+        return mPlace_of_birth;
+    }
+    
+    public void setPlace_of_birth(String place_of_birth) {
+        mPlace_of_birth = place_of_birth;
+    }
+    
+    public String getBirthday() {
+        return mBirthday;
+    }
+    
+    public void setBirthday(String birthday) {
+        mBirthday = birthday;
     }
 }

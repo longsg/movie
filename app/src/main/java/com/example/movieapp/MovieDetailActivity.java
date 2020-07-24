@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.movieapp.view.MovieDetailFragment;
+import com.example.movieapp.view.movie.MovieDetailFragment;
 
 public class MovieDetailActivity extends SingleActivity {
     public static final String MOVIE_TAG = ":: MovieDetailActivity :";

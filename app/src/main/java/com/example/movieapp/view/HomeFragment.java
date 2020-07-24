@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.movieapp.MovieDetailActivity;
+import com.example.movieapp.PeopleDetailActivity;
 import com.example.movieapp.R;
 import com.example.movieapp.adapter.SlideAdapter;
 import com.example.movieapp.adapter.movieadapter.MoviesAdapter;
@@ -40,20 +41,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HomeFragment extends Fragment {
-    private static final int SPEED_SCROOL = 2000;
-    private RecyclerView mPopularRecycler, mTopRecycler, mCastingRecycler;
-    private ViewPager2 mViewPager2;
-    private Toolbar mToolbar;
-    private TextView mTextView;
-    private MoviesAdapter mMoviesAdapter;
-    private SlideAdapter mSlideAdapter;
-    private MovieViewModel mMovieViewModel;
-    private Timer mTimer;
+    private static final int          SPEED_SCROOL = 2000;
+    private static final String       TAG          = ":: HomeFragment :";
+    private              RecyclerView mPopularRecycler, mTopRecycler, mCastingRecycler;
+    private ViewPager2      mViewPager2;
+    private Toolbar         mToolbar;
+    private TextView        mTextView;
+    private MoviesAdapter   mMoviesAdapter;
+    private SlideAdapter    mSlideAdapter;
+    private MovieViewModel  mMovieViewModel;
+    private Timer           mTimer;
     private PersonViewModel mPersonViewModel;
-    private PeopleAdapter mPeopleAdapter;
-    private Handler mHandler;
-    private Runnable mRunnable;
-    private static final String TAG = ":: HomeFragment :";
+    private PeopleAdapter   mPeopleAdapter;
+    private Handler         mHandler;
+    private Runnable        mRunnable;
     
     public static HomeFragment newInstance() {
         
@@ -71,7 +72,8 @@ public class HomeFragment extends Fragment {
     
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.home_activity, container, false);
     }
     
@@ -80,12 +82,13 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initView(view);
-        // link @{ https://stackoverflow.com/questions/38189198/how-to-use-setsupportactionbar-in-fragment}
+        // link @{ https://stackoverflow.com/questions/38189198/how-to-use-setsupportactionbar-in
+        // -fragment}
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-        
-        
+    
+    
         // setSupportActionBar(mToolbar);
-        
+    
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 //        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         //movie
@@ -109,10 +112,18 @@ public class HomeFragment extends Fragment {
         List<Movie> movieList = movieResult.getResultsMovies();
         mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
         mTopRecycler.setHasFixedSize(true);
-        mTopRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
-        
+        mTopRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false));
         mTopRecycler.setAdapter(mMoviesAdapter);
+        //detail movie
+    
+        mMoviesAdapter.setIClickListener((view, postion) -> {
+            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(),
+                    movieList.get(postion).getId());
+            getActivity().startActivity(intent);
+        });
         automaticMove(movieList, mTopRecycler);
+    
     }
     
     private <T> List<T> automaticMove(List<T> list, RecyclerView recyclerView) {
@@ -137,13 +148,26 @@ public class HomeFragment extends Fragment {
     private void getPeople(People people) {
     
         mCastingRecycler.setHasFixedSize(true);
-        mCastingRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        mCastingRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false));
     
         List<Persons> mPersonsList = new ArrayList<>(people.getPersonsList());
-    
         mPeopleAdapter = new PeopleAdapter(getActivity(), mPersonsList);
-    
+        mPeopleAdapter.setIClickListener((view, position) -> {
+        
+            Log.d(TAG,
+                    "getPeople called():  ->Info : " + mPersonsList.get(position).getBiography());
+            Intent intent = PeopleDetailActivity.newIntent(getActivity(),
+                    mPersonsList.get(position).getId());
+            Objects.requireNonNull(getActivity()).startActivity(intent);
+            assert getFragmentManager() != null;
+            getFragmentManager().addOnBackStackChangedListener(null);
+        
+        
+        });
         mCastingRecycler.setAdapter(mPeopleAdapter);
+    
+    
         automaticMove(mPersonsList, mCastingRecycler);
     }
     
@@ -156,18 +180,20 @@ public class HomeFragment extends Fragment {
     }
     
     private void getMoviePopular(MovieResult movieResult) {
-        
+    
         List<Movie> movieList = new ArrayList<>(movieResult.getResultsMovies());
         for (Movie movie : movieList) {
             Log.d(TAG, "getMoviePopular called():  ->" + movie.getTitle() + "\n");
         }
         mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
-        mPopularRecycler.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        mPopularRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false));
         mPopularRecycler.setHasFixedSize(true);
         mPopularRecycler.setAdapter(mMoviesAdapter);
-        
+    
         mMoviesAdapter.setIClickListener((view, position) -> {
-            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(), movieList.get(position).getId());
+            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(),
+                    movieList.get(position).getId());
             Objects.requireNonNull(getActivity()).startActivity(intent);
         });
         automaticMove(movieList, mPopularRecycler);
@@ -176,7 +202,7 @@ public class HomeFragment extends Fragment {
     
     private void slideView(List<Movie> movieList) {
         List<Movie> mSlideMovie = new ArrayList<>();
-        int i = 0;
+        int         i           = 0;
         while (i < 5) {
             mSlideMovie.add(movieList.get(i));
             i++;

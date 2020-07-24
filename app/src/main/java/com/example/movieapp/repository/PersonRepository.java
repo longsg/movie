@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.movieapp.model.personmodel.People;
+import com.example.movieapp.model.personmodel.Persons;
 import com.example.movieapp.network.MovieRetrofit;
 
 import retrofit2.Call;
@@ -12,10 +13,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PersonRepository {
-    private static final String TAG = ":: PersonRepository :";
-    private static PersonRepository sPersonRepository;
-    private MovieRetrofit mMovieRetrofit;
-    private IMoviesCallListener mIMoviesCallListener;
+    private static final String              TAG = ":: PersonRepository :";
+    private static       PersonRepository    sPersonRepository;
+    private              IMoviesCallListener mIMoviesCallListener;
     
     public PersonRepository() {
         mIMoviesCallListener = MovieRetrofit.createRetrofit(IMoviesCallListener.class);
@@ -38,7 +38,7 @@ public class PersonRepository {
                             mutableLiveData.setValue(response.body());
                         }
                     }
-                    
+    
                     @Override
                     public void onFailure(Call<People> call, Throwable t) {
                         mutableLiveData.setValue(null);
@@ -46,4 +46,28 @@ public class PersonRepository {
                 });
         return mutableLiveData;
     }
+    
+    public MutableLiveData<Persons> getMovieCreditsPerson(String personId, String api) {
+        MutableLiveData<Persons> mutableLiveData = new MutableLiveData<>();
+        mIMoviesCallListener.getMovieCredits(personId, api)
+                .enqueue(new Callback<Persons>() {
+                    @Override
+                    public void onResponse(Call<Persons> call, Response<Persons> response) {
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, "onResponse called():  -> Person Url " + response.raw());
+                            mutableLiveData.setValue(response.body());
+                        }
+                    }
+                    
+                    @Override
+                    public void onFailure(Call<Persons> call, Throwable t) {
+                        Log.e(TAG, "onFailure called() :  -> Error wih :" + t.getMessage());
+                        mutableLiveData.setValue(null);
+                    }
+                });
+        
+        
+        return mutableLiveData;
+    }
+    
 }
