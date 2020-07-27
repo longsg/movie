@@ -22,8 +22,8 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private IClickListener mIClickListener;
-    private Context mContext;
-    private List<Movie> mMovieList;
+    private Context        mContext;
+    private List<Movie>    mMovieList;
     
     public MoviesAdapter(Context context, List<Movie> movieList) {
         mContext = context;
@@ -56,33 +56,33 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mImageView;
-        private TextView mTitle;
-        private Movie currentMovie;
+        private TextView  mTitle;
+        private Movie     currentMovie;
         
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.image_movie);
             mTitle = itemView.findViewById(R.id.title_movie);
-    
+            
             itemView.setOnClickListener(this);
         }
-    
+        
         @Override
         public void onClick(View view) {
             mIClickListener.onClick(view, getAdapterPosition());
         }
-    
+        
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void onBindMoview(Movie movie) {
             currentMovie = movie;
-            if (!currentMovie.getTitle().isEmpty() && !currentMovie.getPoster_path().isEmpty()) {
+            if (currentMovie.getTitle() == null && currentMovie.getPoster_path() == null) {
+                mTitle.setText(currentMovie.getOriginal_title());
+                mImageView.setImageDrawable(mContext.getDrawable(R.drawable.blade_poster));
+            } else {
                 Glide.with(mContext)
                         .load(UrlManager.POSTER_URL + currentMovie.getPoster_path())
                         .into(mImageView);
                 mTitle.setText(currentMovie.getTitle());
-            } else {
-                mTitle.setText(currentMovie.getOriginal_title());
-                mImageView.setImageDrawable(mContext.getDrawable(R.drawable.blade_poster));
             }
         }
     }
