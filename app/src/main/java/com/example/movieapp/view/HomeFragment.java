@@ -31,6 +31,7 @@ import com.example.movieapp.model.moviemodel.Movie;
 import com.example.movieapp.model.moviemodel.MovieResult;
 import com.example.movieapp.model.personmodel.People;
 import com.example.movieapp.model.personmodel.Persons;
+import com.example.movieapp.network.IClickListener;
 import com.example.movieapp.viewmodel.MovieViewModel;
 import com.example.movieapp.viewmodel.PersonViewModel;
 
@@ -153,17 +154,18 @@ public class HomeFragment extends Fragment {
     
         List<Persons> mPersonsList = new ArrayList<>(people.getPersonsList());
         mPeopleAdapter = new PeopleAdapter(getActivity(), mPersonsList);
-        mPeopleAdapter.setIClickListener((view, position) -> {
-        
-            Log.d(TAG,
-                    "getPeople called():  ->Info : " + mPersonsList.get(position).getBiography());
-            Intent intent = PeopleDetailActivity.newIntent(getActivity(),
-                    mPersonsList.get(position).getId());
-            Objects.requireNonNull(getActivity()).startActivity(intent);
-            assert getFragmentManager() != null;
-            getFragmentManager().addOnBackStackChangedListener(null);
-        
-        
+        mPeopleAdapter.setIClickListener(new IClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Log.d(TAG,
+                        "getPeople called():  ->Info : " + mPersonsList.get(position).getBiography());
+                Intent intent = PeopleDetailActivity.newIntent(getActivity(),
+                        mPersonsList.get(position).getId());
+                Objects.requireNonNull(getActivity()).startActivity(intent);
+                assert getFragmentManager() != null;
+//                getFragmentManager().addOnBackStackChangedListener(null);
+            
+            }
         });
         mCastingRecycler.setAdapter(mPeopleAdapter);
     

@@ -4,8 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.movieapp.model.personmodel.CastFilm;
 import com.example.movieapp.model.personmodel.People;
-import com.example.movieapp.model.personmodel.Persons;
 import com.example.movieapp.network.MovieRetrofit;
 
 import retrofit2.Call;
@@ -47,12 +47,12 @@ public class PersonRepository {
         return mutableLiveData;
     }
     
-    public MutableLiveData<Persons> getMovieCreditsPerson(String personId, String api) {
-        MutableLiveData<Persons> mutableLiveData = new MutableLiveData<>();
+    public MutableLiveData<CastFilm> getMovieCreditsPerson(String personId, String api) {
+        MutableLiveData<CastFilm> mutableLiveData = new MutableLiveData<>();
         mIMoviesCallListener.getMovieCredits(personId, api)
-                .enqueue(new Callback<Persons>() {
+                .enqueue(new Callback<CastFilm>() {
                     @Override
-                    public void onResponse(Call<Persons> call, Response<Persons> response) {
+                    public void onResponse(Call<CastFilm> call, Response<CastFilm> response) {
                         if (response.isSuccessful()) {
                             Log.d(TAG, "onResponse called():  -> Person Url " + response.raw());
                             mutableLiveData.setValue(response.body());
@@ -60,7 +60,7 @@ public class PersonRepository {
                     }
                     
                     @Override
-                    public void onFailure(Call<Persons> call, Throwable t) {
+                    public void onFailure(Call<CastFilm> call, Throwable t) {
                         Log.e(TAG, "onFailure called() :  -> Error wih :" + t.getMessage());
                         mutableLiveData.setValue(null);
                     }

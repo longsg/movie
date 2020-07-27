@@ -14,7 +14,7 @@ public class Persons implements Parcelable {
         public Persons createFromParcel(Parcel in) {
             return new Persons(in);
         }
-        
+    
         @Override
         public Persons[] newArray(int size) {
             return new Persons[size];
@@ -41,9 +41,6 @@ public class Persons implements Parcelable {
     @SerializedName("biography")
     @Expose
     private             String           mBiography;
-    @SerializedName("place_of_birth")
-    @Expose
-    private             String           mPlace_of_birth;
     
     public Persons() {
     }
@@ -51,20 +48,9 @@ public class Persons implements Parcelable {
     @SerializedName("birthday")
     @Expose
     private String mBirthday;
-    
-    public Persons(String overView, String name, String id, String profile_path,
-                   List<CastFilm> castFilms, String gender, String biography,
-                   String place_of_birth, String birthday) {
-        mOverView = overView;
-        mName = name;
-        mId = id;
-        mProfile_path = profile_path;
-        mCastFilms = castFilms;
-        mGender = gender;
-        mBiography = biography;
-        mPlace_of_birth = place_of_birth;
-        mBirthday = birthday;
-    }
+    @SerializedName("place_of_birth")
+    @Expose
+    private String mPlace_of_birth;
     
     protected Persons(Parcel in) {
         mOverView = in.readString();
@@ -78,23 +64,36 @@ public class Persons implements Parcelable {
         mBirthday = in.readString();
     }
     
+    public Persons(String overView, String name, String id, String profile_path,
+                   List<CastFilm> casts
+            , String gender, String biography, String place_of_birth, String birthday) {
+        mOverView = overView;
+        mName = name;
+        mId = id;
+        mProfile_path = profile_path;
+        mCastFilms = casts;
+        mGender = gender;
+        mBiography = biography;
+        mPlace_of_birth = place_of_birth;
+        mBirthday = birthday;
+    }
+    
     @Override
     public int describeContents() {
         return 0;
     }
     
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        
-        parcel.writeString(mOverView);
-        parcel.writeString(mName);
-        parcel.writeString(mId);
-        parcel.writeString(mProfile_path);
-        parcel.writeTypedList(mCastFilms);
-        parcel.writeString(mGender);
-        parcel.writeString(mBiography);
-        parcel.writeString(mPlace_of_birth);
-        parcel.writeString(mBirthday);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mOverView);
+        dest.writeString(mName);
+        dest.writeString(mId);
+        dest.writeString(mProfile_path);
+        dest.writeTypedList(mCastFilms);
+        dest.writeString(mGender);
+        dest.writeString(mBiography);
+        dest.writeString(mPlace_of_birth);
+        dest.writeString(mBirthday);
     }
     
     public String getOverView() {
@@ -133,8 +132,8 @@ public class Persons implements Parcelable {
         return mCastFilms;
     }
     
-    public void setCastFilms(List<CastFilm> castFilms) {
-        mCastFilms = castFilms;
+    public void setCastFilms(List<CastFilm> casts) {
+        mCastFilms = casts;
     }
     
     public String getGender() {

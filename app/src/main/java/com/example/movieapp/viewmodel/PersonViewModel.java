@@ -5,15 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.movieapp.BuildConfig;
+import com.example.movieapp.model.personmodel.CastFilm;
 import com.example.movieapp.model.personmodel.People;
-import com.example.movieapp.model.personmodel.Persons;
 import com.example.movieapp.repository.PersonRepository;
 
 public class PersonViewModel extends ViewModel {
-    private static final String                   TAG = ":: PersonViewModel :";
-    private              PersonRepository         mPersonRepository;
-    private              MutableLiveData<People>  mPeopleMutableLiveData;
-    private              MutableLiveData<Persons> mPersonsMutableLiveData;
+    private static final String                    TAG = ":: PersonViewModel :";
+    private              PersonRepository          mPersonRepository;
+    private              MutableLiveData<People>   mPeopleMutableLiveData;
+    private              MutableLiveData<CastFilm> mPersonsMutableLiveData;
     
     public void initAllPeople() {
         if (mPeopleMutableLiveData != null)
@@ -30,7 +30,7 @@ public class PersonViewModel extends ViewModel {
     }
     
     
-    public LiveData<Persons> findMovieCredits() {
+    public LiveData<CastFilm> findMovieCredits() {
         return mPersonsMutableLiveData;
     }
     

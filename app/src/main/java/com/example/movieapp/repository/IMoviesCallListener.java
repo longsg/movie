@@ -2,6 +2,7 @@ package com.example.movieapp.repository;
 
 import com.example.movieapp.model.moviemodel.Movie;
 import com.example.movieapp.model.moviemodel.MovieResult;
+import com.example.movieapp.model.personmodel.CastFilm;
 import com.example.movieapp.model.personmodel.People;
 import com.example.movieapp.model.personmodel.Persons;
 
@@ -35,8 +36,8 @@ public interface IMoviesCallListener {
     
     // get movie credits
     @GET("/3/person/{person_id}/movie_credits")
-    Call<Persons> getMovieCredits(@Path("person_id") String personId,
-                                  @Query("api_key") String api_key);
+    Call<CastFilm> getMovieCredits(@Path("person_id") String personId,
+                                   @Query("api_key") String api_key);
     
     @GET("/3/person/{person_id}")
     Call<Persons> getPersonDetail(@Path("person_id") String personId,
