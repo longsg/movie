@@ -13,10 +13,10 @@ import com.example.movieapp.repository.MovieRepository;
 public class MovieViewModel extends ViewModel {
     private static final String TAG = ":: MovieViewModel :";
     
-    private MovieRepository mMovieRepository;
+    private MovieRepository              mMovieRepository;
     private MutableLiveData<MovieResult> mLiveMoviePopular;
     private MutableLiveData<MovieResult> mListTop;
-    
+    private MutableLiveData<MovieResult> mSearchMovieList;
     private MutableLiveData<MovieResult> mMovie;
     
     public void initPopular() {
@@ -51,4 +51,17 @@ public class MovieViewModel extends ViewModel {
     public MutableLiveData<MovieResult> getSimilarMovie() {
         return mMovie;
     }
+    
+    // search movie
+    public LiveData<MovieResult> findMovie() {
+        return mSearchMovieList;
+    }
+    
+    public void initFindMovie(String keyWords, String apiKey) {
+        if (mSearchMovieList != null)
+            return;
+        mMovieRepository = MovieRepository.getInstance();
+        mSearchMovieList = mMovieRepository.findMovieWithKeyWords(keyWords, apiKey);
+    }
+    
 }

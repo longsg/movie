@@ -25,6 +25,11 @@ public interface IMoviesCallListener {
     Call<Movie> getDetailMovie(@Path("movie_id") String movieId,
                                @Query("api_key") String api);
     
+    //search movie with keywords
+    @GET("/3/search/movie")
+    Call<MovieResult> findMovieWithKeyWords(@Path("query") String query,
+                                            @Query("api_key") String apiKey);
+    
     //similar movie
     @GET("/3/movie/{movie_id}/similar")
     Call<MovieResult> getSimilarMovie(@Path("movie_id") String movieId,
@@ -39,6 +44,7 @@ public interface IMoviesCallListener {
     Call<CastFilm> getMovieCredits(@Path("person_id") String personId,
                                    @Query("api_key") String api_key);
     
+    //detail person
     @GET("/3/person/{person_id}")
     Call<Persons> getPersonDetail(@Path("person_id") String personId,
                                   @Query("api_key") String apiKey);

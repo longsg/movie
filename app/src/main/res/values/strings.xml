@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+    <string name="popular">What\'s popular today</string>
+    <string name="toprated">Top this week</string>
+    <string name="cast">Top person</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="overview">Overview</string>
+    <string name="similar">Similar movies</string>
+    <string name="name_person">Name:</string>
+    <string name="birth_day">Birth Day</string>
+    <string name="place_born">Place Born</string>
+    <string name="biography">Biography</string>
+    <string name="know_for">Know For</string>
+</resources>

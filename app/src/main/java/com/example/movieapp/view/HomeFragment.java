@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +35,6 @@ import com.example.movieapp.model.moviemodel.Movie;
 import com.example.movieapp.model.moviemodel.MovieResult;
 import com.example.movieapp.model.personmodel.People;
 import com.example.movieapp.model.personmodel.Persons;
-import com.example.movieapp.network.IClickListener;
 import com.example.movieapp.viewmodel.MovieViewModel;
 import com.example.movieapp.viewmodel.PersonViewModel;
 
@@ -42,7 +45,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class HomeFragment extends Fragment {
-    private static final int          SPEED_SCROOL = 2000;
+    private static final int          SPEED_SCROOL = 1500;
     private static final String       TAG          = ":: HomeFragment :";
     private              RecyclerView mPopularRecycler, mTopRecycler, mCastingRecycler;
     private ViewPager2      mViewPager2;
@@ -69,13 +72,14 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.home_activity, container, false);
+        return inflater.inflate(R.layout.home_fragment, container, false);
     }
     
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -85,12 +89,12 @@ public class HomeFragment extends Fragment {
         initView(view);
         // link @{ https://stackoverflow.com/questions/38189198/how-to-use-setsupportactionbar-in
         // -fragment}
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) Objects.requireNonNull(getActivity())).setSupportActionBar(mToolbar);
     
     
         // setSupportActionBar(mToolbar);
     
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(((AppCompatActivity) getActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(false);
 //        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
         //movie
         mMovieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
@@ -99,32 +103,21 @@ public class HomeFragment extends Fragment {
         //list top movie
         mMovieViewModel.initTopRated();
         mMovieViewModel.getListTop().observe(this, this::getTopRated);
-        
+    
         //person
         mPersonViewModel = ViewModelProviders.of(this).get(PersonViewModel.class);
         mPersonViewModel.initAllPeople();
         mPersonViewModel.getPeopleMutableLiveData().observe(this, this::getPeople);
-        
+    
         mHandler = new Handler();
-        
     }
     
-    private void getTopRated(MovieResult movieResult) {
-        List<Movie> movieList = movieResult.getResultsMovies();
-        mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
-        mTopRecycler.setHasFixedSize(true);
-        mTopRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
-                RecyclerView.HORIZONTAL, false));
-        mTopRecycler.setAdapter(mMoviesAdapter);
-        //detail movie
-    
-        mMoviesAdapter.setIClickListener((view, postion) -> {
-            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(),
-                    movieList.get(postion).getId());
-            getActivity().startActivity(intent);
-        });
-        automaticMove(movieList, mTopRecycler);
-    
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.home_menu, menu);
+
+//        SearchView searchView = (SearchView) menu.findItem(R.id.search_movie_home);
+        super.onCreateOptionsMenu(menu, inflater);
     }
     
     private <T> List<T> automaticMove(List<T> list, RecyclerView recyclerView) {
@@ -146,31 +139,16 @@ public class HomeFragment extends Fragment {
         return list;
     }
     
-    private void getPeople(People people) {
-    
-        mCastingRecycler.setHasFixedSize(true);
-        mCastingRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
-                RecyclerView.HORIZONTAL, false));
-    
-        List<Persons> mPersonsList = new ArrayList<>(people.getPersonsList());
-        mPeopleAdapter = new PeopleAdapter(getActivity(), mPersonsList);
-        mPeopleAdapter.setIClickListener(new IClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Log.d(TAG,
-                        "getPeople called():  ->Info : " + mPersonsList.get(position).getBiography());
-                Intent intent = PeopleDetailActivity.newIntent(getActivity(),
-                        mPersonsList.get(position).getId());
-                Objects.requireNonNull(getActivity()).startActivity(intent);
-                assert getFragmentManager() != null;
-//                getFragmentManager().addOnBackStackChangedListener(null);
-            
-            }
-        });
-        mCastingRecycler.setAdapter(mPeopleAdapter);
-    
-    
-        automaticMove(mPersonsList, mCastingRecycler);
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+        
+        if (itemId == R.id.search_movie_home) {
+            Toast.makeText(getActivity(), "Search", Toast.LENGTH_SHORT).show();
+        }
+        
+        
+        return super.onOptionsItemSelected(item);
     }
     
     private void initView(View view) {
@@ -180,6 +158,49 @@ public class HomeFragment extends Fragment {
         mViewPager2 = view.findViewById(R.id.viewpager2_container);
         mToolbar = view.findViewById(R.id.toolBar);
     }
+    
+    private void getTopRated(MovieResult movieResult) {
+        List<Movie> movieList = movieResult.getResultsMovies();
+        mMoviesAdapter = new MoviesAdapter(getActivity(), movieList);
+        mTopRecycler.setHasFixedSize(true);
+        mTopRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false));
+        mTopRecycler.setAdapter(mMoviesAdapter);
+        //detail movie
+        
+        mMoviesAdapter.setIClickListener((view, postion) -> {
+            Intent intent = MovieDetailActivity.movieDetailIntent(getActivity(),
+                    movieList.get(postion).getId());
+            getActivity().startActivity(intent);
+        });
+        automaticMove(movieList, mTopRecycler);
+        
+    }
+    
+    private void getPeople(People people) {
+    
+        mCastingRecycler.setHasFixedSize(true);
+        mCastingRecycler.setLayoutManager(new LinearLayoutManager(getActivity(),
+                RecyclerView.HORIZONTAL, false));
+    
+        List<Persons> mPersonsList = new ArrayList<>(people.getPersonsList());
+        mPeopleAdapter = new PeopleAdapter(getActivity(), mPersonsList);
+        mPeopleAdapter.setIClickListener((view, position) -> {
+            Log.d(TAG,
+                    "getPeople called():  ->Info : " + mPersonsList.get(position).getBiography());
+            Intent intent = PeopleDetailActivity.newIntent(getActivity(),
+                    mPersonsList.get(position).getId());
+            Objects.requireNonNull(getActivity()).startActivity(intent);
+            assert getFragmentManager() != null;
+//                getFragmentManager().addOnBackStackChangedListener(null);
+        
+        });
+        mCastingRecycler.setAdapter(mPeopleAdapter);
+    
+    
+        automaticMove(mPersonsList, mCastingRecycler);
+    }
+    //make a bullet
     
     private void getMoviePopular(MovieResult movieResult) {
     
@@ -223,7 +244,5 @@ public class HomeFragment extends Fragment {
         mTimer = new Timer();
         mTimer.schedule(timerTask, 5000, 2000);
     }
-    //make a bullet
-    
 }
 

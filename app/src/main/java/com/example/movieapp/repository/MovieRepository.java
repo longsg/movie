@@ -77,14 +77,33 @@ public class MovieRepository {
                     Log.d(TAG, "onResponse called():  ->URL " + response.body());
                 }
             }
-            
+    
             @Override
             public void onFailure(Call<MovieResult> call, Throwable t) {
                 movieResultMutableLiveData.setValue(null);
             }
         });
         return movieResultMutableLiveData;
-        
+    
+    }
+    
+    public MutableLiveData<MovieResult> findMovieWithKeyWords(String keyWords, String api) {
+        MutableLiveData<MovieResult> movieResult = new MutableLiveData<>();
+        mIMoviesCallListener.findMovieWithKeyWords(keyWords, api).enqueue(new Callback<MovieResult>() {
+            @Override
+            public void onResponse(Call<MovieResult> call, Response<MovieResult> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "onResponse called():  -> Find Movie URL " + response.raw());
+                    movieResult.setValue(response.body());
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<MovieResult> call, Throwable t) {
+                Log.d(TAG, "onFailure called():  -> Fail Url " + t.getMessage());
+            }
+        });
+        return movieResult;
     }
     
 }
